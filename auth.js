@@ -38,32 +38,7 @@ async function login(credentials) {
   }
 }
 async function signup(user) {
-  if (!user.username || !user.password || !user.email) {
-    alert("Please enter username, email and password.");
-    return;
-  }
-
-  try {
-    const response = await fetch("https://fakestoreapi.com/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    });
-    if (!response.ok) {
-      alert("Signup failed.");
-      return;
-    }
-
-    const data = await response.json();
-    // console.log(data)
-    // setToken(token);
-    alert("Signup successful!");
-
-    window.location.href = "login.html";
-  } catch (error) {
-    console.error("Signup error:", error);
-    alert("An error occurred during signup.");
-  }
+  
 }
 
 const loginForm = document.getElementById("loginForm");
@@ -80,4 +55,14 @@ if (loginForm) {
   });
 }
 
+if (signupForm) {
+  signupForm.addEventListener("submit", function (e) {
+    e.preventDefault();
 
+    const username = signupForm.querySelector("#signupUsername").value.trim();
+    const email = signupForm.querySelector("#signupEmail").value.trim();
+    const password = signupForm.querySelector("#signupPassword").value.trim();
+
+    signup({ username, email, password });
+  });
+}
