@@ -4,7 +4,21 @@
 
 // Cart and Product Variables
 const cart = [];
+const cartAmount = document.querySelector(".cartAmount");
 let allProducts = [];
+
+// Load cart from localStorage
+const cartValue = localStorage.getItem("cartValue");
+if (cartValue) {
+  try {
+    const parsedCart = JSON.parse(cartValue);
+    cart.push(...parsedCart);
+    updateCartDisplay();
+  } catch (error) {
+    console.error("Failed to parse cart from localStorage", error);
+    localStorage.removeItem("cartValue");
+  }
+}
 
 // Token Check for Authentication
 const token = localStorage.getItem("token");
@@ -29,8 +43,6 @@ logoutBtn.addEventListener("click", logout);
 // -----------------------
 // Cart Display Update
 // -----------------------
-
-const cartAmount = document.querySelector(".cartAmount");
 
 function updateCartDisplay() {
   cartAmount.innerText = `${cart.length}`;
@@ -71,10 +83,10 @@ productContainer.addEventListener("click", function (e) {
   if (e.target.classList.contains("add-to-cart")) {
     const id = e.target.getAttribute("data-index");
     const product = allProducts.find((p) => p.id == id);
-
     if (product) {
       cart.push(product);
       updateCartDisplay();
+      localStorage.setItem("cartValue", JSON.stringify(cart))
     }
   }
 });
@@ -84,7 +96,21 @@ productContainer.addEventListener("click", function (e) {
 // -----------------------
 
 async function fetchProducts() {
-  
+  try {
+    const response = await fetch('https://fakestoreapi.com/products')
+    if(!response.ok) {
+      throw new Error('Something went wrong while fetching products');
+    }
+    allProducts = await response.json()
+    const products = [];
+    for (let i = 0; i < 12; i++) {
+      const random = Math.floor(Math.random() * allProducts.length);
+      products.push(allProducts[random]);
+    }
+    return displayProducts(products);
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 // -----------------------

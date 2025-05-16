@@ -38,7 +38,27 @@ async function login(credentials) {
   }
 }
 async function signup(user) {
-  
+  try{
+    const response = await fetch('https://fakestoreapi.com/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user)
+    });
+    console.log(response);
+    const token = await response.json();
+    console.log(token);
+    if (!response.ok) {
+      alert("An error occurred during signup. Please try again.");
+      return;
+    }
+    setToken(token);
+    alert("Signup successful!");
+    window.location.href = "index.html"
+  }catch (error) {
+    console.error("Signup error:", error);
+    alert("An error occurred during signup.");
+  }
+
 }
 
 const loginForm = document.getElementById("loginForm");
